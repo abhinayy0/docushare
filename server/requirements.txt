@@ -1,0 +1,5 @@
+fastapi
+python-socketio
+uvicorn
+websockets
+motor
