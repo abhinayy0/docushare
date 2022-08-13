@@ -1,0 +1,6 @@
+{
+  "VERSION": "0.1.0",
+  "DEBUG": false,
+  "PORT": 3000,
+  "MONGO_DB_URL": ""
+}
