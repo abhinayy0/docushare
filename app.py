@@ -7,6 +7,9 @@ from random_object_id import generate
 import logging
 import json
 import os
+import sys
+from fastapi.staticfiles import StaticFiles
+
 
 with open("settings.json", "r") as f:
     config = json.loads(f.read())
@@ -14,6 +17,8 @@ with open("settings.json", "r") as f:
 logger = logging.getLogger(__name__)
 
 api = FastAPI()
+api.mount("/", StaticFiles(directory="build",html = True), name="static")
+
 api.doc2uid = {}
 if config["MONGO_DB_URL"] == "":
     MONGO_DB = os.environ["MONGO_DB"]
@@ -21,8 +26,10 @@ else:
     MONGO_DB = config["MONGO_DB_URL"]
 try:
     client = AsyncIOMotorClient(str(MONGO_DB),tls=True, tlsAllowInvalidCertificates=True)
-except: 
-    print("Unable to start application database connection not available")
+except Exception as ex: 
+    logger.exception("Unable to start application database connection not available")
+    sys.exit(0)
+    
 
 db = client.docdb
 doc_collection = db.doc_collection
@@ -33,8 +40,11 @@ origins = [
     "http://localhost:8080",
     "http://localhost:3000",
     "http://localhost:3000",
+    "http://localhost:8000",
     "http://127.0.0.1:3000",
+    "http://127.0.0.1:8000"
     "127.0.0.1:3000",
+    "127.0.0.1:8000",
     "localhost:3000",
 ]
 
