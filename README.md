@@ -1,7 +1,7 @@
 <p align="center">
   <p align="center">
-    <a href="https://abhinayy0.github.io/DQRCG/" target="_blank">
-          <img src="./docushare/public/favicon.png" alt="Docushare" height="72">
+    <a href="https://github.com/abhinayy0/docushare" target="_blank">
+          <img src="./public/favicon.ico" alt="Docushare" height="72">
     </a>
   </p>
   <p align="center">
@@ -65,7 +65,7 @@ Setting up the server locally.
    http://127.0.0.1:8000
    ```
 
-7. Adjust the backend api config.BASE_URL in [settings.json](./docushare/settings.json) to point
+7. Adjust the backend api config.BASE_URL in [settings.json](./settings.json) to point
    to your flask backend. Your project should now be working.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
