@@ -4,7 +4,7 @@ import "quill/dist/quill.snow.css";
 import { io } from "socket.io-client";
 import { useParams } from "react-router-dom";
 
-const SAVE_INTERVAL_MS = 2000;
+const SAVE_INTERVAL_MS = 5000;
 const TOOLBAR_OPTIONS = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
   [{ font: [] }],
@@ -23,7 +23,7 @@ export default function TextEditor() {
   const [quill, setQuill] = useState();
 
   useEffect(() => {
-    const s = io("http://localhost:8000");
+    const s = io();
     setSocket(s);
 
     return () => {
@@ -46,19 +46,22 @@ export default function TextEditor() {
     if (socket == null || quill == null) return;
 
     const interval = setInterval(() => {
-      socket.emit("save-document", quill.getContents());
+      socket.emit("save-document", documentId, quill.getContents());
+      console.log("docid is ", documentId);
+      console.log("contents are ", quill.getContents());
     }, SAVE_INTERVAL_MS);
 
     return () => {
       clearInterval(interval);
     };
-  }, [socket, quill]);
+  }, [socket, quill, documentId]);
 
   useEffect(() => {
     if (socket == null || quill == null) return;
 
     const handler = (delta) => {
       quill.updateContents(delta);
+      console.log("dattatatatta", delta);
     };
     socket.on("receive-changes", handler);
 
@@ -73,6 +76,7 @@ export default function TextEditor() {
     const handler = (delta, oldDelta, source) => {
       if (source !== "user") return;
       socket.emit("send-changes", delta);
+      console.log("dattatatatta", delta);
     };
     quill.on("text-change", handler);
 
