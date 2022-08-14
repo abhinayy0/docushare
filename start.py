@@ -15,3 +15,4 @@ if config["DEBUG"]:
     os.system("uvicorn app:app --reload")
 else:
     os.system("uvicorn app:app")
+    # os.system("gunicorn -w 1 -k uvicorn.workers.UvicornWorker")

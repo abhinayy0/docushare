@@ -5,3 +5,4 @@ websockets
 motor
 random-object-id
 pymongo[srv]
+gunicorn
