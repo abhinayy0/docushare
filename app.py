@@ -9,7 +9,8 @@ import json
 import os
 import sys
 from fastapi.staticfiles import StaticFiles
-
+from fastapi.templating import Jinja2Templates
+from fastapi import Request
 
 with open("settings.json", "r") as f:
     config = json.loads(f.read())
@@ -17,7 +18,8 @@ with open("settings.json", "r") as f:
 logger = logging.getLogger(__name__)
 
 api = FastAPI()
-api.mount("/", StaticFiles(directory="build",html = True), name="static")
+
+templates = Jinja2Templates(directory="build")
 
 api.doc2uid = {}
 if config["MONGO_DB_URL"] == "":
@@ -34,41 +36,23 @@ except Exception as ex:
 db = client.docdb
 doc_collection = db.doc_collection
 
-
-origins = [
-    "http://127.0.0.1:8000",
-    "localhost:8000",
-    "http://localhost",
-    "http://localhost:8080",
-    "http://localhost:3000",
-    "http://localhost:3000",
-    "http://localhost:8000",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:8000"
-    "127.0.0.1:3000",
-    "127.0.0.1:8000",
-    "localhost:3000",
-    "https://docsshare.herokuapp.com",
-    "http://docsshare.herokuapp.com",
-    "docsshare.herokuapp.com"
-]
-
 api.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=config["origins"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-
-@api.get("/")
-async def root():
-    return ["Docushare api"]
-
-sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins=origins)
+sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins=config["origins"])
 app = socketio.ASGIApp(sio, api)
 
+@api.get("/documents/{document_id}")
+async def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+#Needed to be below the routes
+api.mount("/", StaticFiles(directory="build",html = True), name="static")
 
 async def find_or_create_doc(id):
     if not id:
@@ -106,6 +90,3 @@ async def connect(sid, environ, auth):
 @sio.event
 def disconnect(sid):
     logger.debug("Disconnected from socket")
-
-
-

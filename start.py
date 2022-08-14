@@ -13,6 +13,7 @@ except:
     pass
 if config["DEBUG"]:
     os.system("uvicorn app:app --reload")
-else:
+elif config["server"] == "uvicorn":
     os.system("uvicorn app:app")
-    # os.system("gunicorn -w 1 -k uvicorn.workers.UvicornWorker")
+else:
+    os.system("gunicorn -w 1 -k uvicorn.workers.UvicornWorker app:app")

@@ -6,3 +6,4 @@ motor
 random-object-id
 pymongo[srv]
 gunicorn
+jinja2
